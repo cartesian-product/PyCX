@@ -1,5 +1,6 @@
 import pycxsimulator
-from pylab import *
+import numpy as np
+from matplotlib import pyplot as plt
 
 width = 50
 height = 50
@@ -17,27 +18,27 @@ def initialize():
 
     agents = []
     for i in range(populationSize):
-        newAgent = [randint(width), randint(height), free]
+        newAgent = [np.random.randint(width), np.random.randint(height), free]
         agents.append(newAgent)
 
-    envir = zeros([height, width])
+    envir = np.zeros([height, width])
     for y in range(height):
         for x in range(width):
-            if random() < garbageProb:
+            if np.random.random() < garbageProb:
                 state = 1
             else:
                 state = 0
             envir[y, x] = state
 
 def observe():
-    cla()
-    imshow(envir, cmap = cm.YlOrRd, vmin = 0, vmax = 5)
-    axis('image')
+    plt.cla()
+    plt.imshow(envir, cmap = plt.cm.YlOrRd, vmin = 0, vmax = 5)
+    plt.axis('image')
     x = [ag[0] for ag in agents]
     y = [ag[1] for ag in agents]
     s = [ag[2] for ag in agents]
-    scatter(x, y, c = s, cmap = cm.bwr)
-    title('t = ' + str(time))
+    plt.scatter(x, y, c = s, cmap = plt.cm.bwr)
+    plt.title('t = ' + str(time))
 
 def clip(a, amin, amax):
     if a < amin: return amin
@@ -52,8 +53,8 @@ def update():
     for ag in agents:
 
         # simulate random motion
-        ag[0] += randint(-1, 2)
-        ag[1] += randint(-1, 2)
+        ag[0] += np.random.randint(-1, 2)
+        ag[1] += np.random.randint(-1, 2)
         ag[0] = clip(ag[0], 0, width - 1)
         ag[1] = clip(ag[1], 0, height - 1)
 

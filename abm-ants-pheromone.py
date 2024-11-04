@@ -1,5 +1,6 @@
 import pycxsimulator
-from pylab import *
+from matplotlib import pyplot as plt
+import numpy as np
 
 width = 50
 height = 50
@@ -16,24 +17,24 @@ def initialize():
     
     agents = []
     for i in range(populationSize):
-        newAgent = [randint(width), randint(height)]
+        newAgent = [np.random.randint(width), np.random.randint(height)]
         agents.append(newAgent)
 
-    envir = zeros([height, width])
+    envir = np.zeros([height, width])
     for y in range(height):
         for x in range(width):
-            envir[y, x] = random()
+            envir[y, x] = np.random.random()
 
-    nextenvir = zeros([height, width])
+    nextenvir = np.zeros([height, width])
 
 def observe():
-    cla()
-    imshow(envir, cmap = cm.YlOrRd, vmin = 0, vmax = 3)
-    axis('image')
+    plt.cla()
+    plt.imshow(envir, cmap = plt.cm.YlOrRd, vmin = 0, vmax = 3)
+    plt.axis('image')
     x = [ag[0] for ag in agents]
     y = [ag[1] for ag in agents]
-    scatter(x, y, cmap = cm.bone, alpha = 0.2)
-    title('t = ' + str(time))
+    plt.scatter(x, y, cmap = plt.cm.bone, alpha = 0.2)
+    plt.title('t = ' + str(time))
 
 def clip(a, amin, amax):
     if a < amin: return amin
@@ -60,7 +61,7 @@ def update():
 
     for ag in agents:
 
-        if random() < hillClimbingProb:
+        if np.random.random() < hillClimbingProb:
             # simulate hill-climbing motion
             maxph = 0
             maxdx = 0
@@ -76,8 +77,8 @@ def update():
             ag[0] += maxdx
             ag[1] += maxdy
         else:
-            ag[0] += randint(-1, 2)
-            ag[1] += randint(-1, 2)
+            ag[0] += np.random.randint(-1, 2)
+            ag[1] += np.random.randint(-1, 2)
 
         ag[0] = clip(ag[0], 0, width - 1)
         ag[1] = clip(ag[1], 0, height - 1)

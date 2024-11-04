@@ -1,5 +1,6 @@
 import pycxsimulator
-from pylab import *
+from matplotlib import pyplot as plt
+import numpy as np
 
 n = 1000 # number of agents
 w = 100 # number of rows/columns in spatial array
@@ -20,21 +21,21 @@ def initialize():
     agents = []
     for i in range(n):
         ag = agent()
-        ag.x = randint(w)
-        ag.y = randint(w)
+        ag.x = np.random.randint(w)
+        ag.y = np.random.randint(w)
         agents.append(ag)
 
-    env = zeros([w, w])
-    nextenv = zeros([w, w])
+    env = np.zeros([w, w])
+    nextenv = np.zeros([w, w])
 
 def observe():
     global agents, env, nextenv
-    cla()
-    imshow(env, cmap = cm.binary, vmin = 0, vmax = 1)
-    axis('image')
+    plt.cla()
+    plt.imshow(env, cmap = plt.cm.binary, vmin = 0, vmax = 1)
+    plt.axis('image')
     x = [ag.x for ag in agents]
     y = [ag.y for ag in agents]
-    plot(y, x, 'b.') # x and y are swapped to match the orientation of env
+    plt.plot(y, x, 'b.') # x and y are swapped to match the orientation of env
 
 def update():
     global agents, env, nextenv
@@ -54,9 +55,9 @@ def update():
 
     # simulating chemotaxis of agents
     for ag in agents:
-        newx, newy = (ag.x + randint(-1, 2)) % w, (ag.y + randint(-1, 2)) % w
+        newx, newy = (ag.x + np.random.randint(-1, 2)) % w, (ag.y + np.random.randint(-1, 2)) % w
         diff = (env[newx, newy] - env[ag.x, ag.y]) / 0.1
-        if random() < exp(diff) / (1 + exp(diff)):
+        if np.random.random() < np.exp(diff) / (1 + np.exp(diff)):
             ag.x, ag.y = newx, newy
 
 pycxsimulator.GUI().start(func=[initialize, observe, update])

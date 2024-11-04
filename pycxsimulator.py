@@ -27,7 +27,10 @@
 ##
 ## various bug fixes and updates by Steve Morgan on 3/28/2020
 
+## Added Simulation class by Will Deter on 11/19/2023
+
 import matplotlib
+import dill
 
 #System check added by Steve Morgan
 import platform #SM 3/28/2020
@@ -50,7 +53,10 @@ else:                        # Python 2
 
 ## suppressing matplotlib deprecation warnings (especially with subplot) by Hiroki Sayama on 06/29/2020
 import warnings
-warnings.filterwarnings("ignore", category = matplotlib.cbook.MatplotlibDeprecationWarning)
+try:
+    warnings.filterwarnings("ignore", category = matplotlib.cbook.MatplotlibDeprecationWarning)
+except:
+    warnings.filterwarnings("ignore", category = matplotlib.MatplotlibDeprecationWarning)
 
 class GUI:
 
@@ -303,3 +309,48 @@ class GUI:
             self.status.configure(foreground='black')
         widget.bind("<Enter>", lambda e : setText(self))
         widget.bind("<Leave>", lambda e : showHelpLeave(self))
+
+class Simulation:
+    def test_run(self, draw3d = False):
+        GUI().start(func=[self.initialize, self.observe, self.update], draw3d = draw3d)
+
+    def run(self, iterations = 1000):
+        self.initialize()
+        for _ in range(iterations):
+            self.update()
+
+    def save_object(self):
+        with open(f'{self.identifier}.pkl', 'wb') as output:
+            dill.dump(self, output, protocol=dill.HIGHEST_PROTOCOL)
+
+class Batch:
+    def __init__(self, simulation:Simulation,  number_of_simulations:int = 100, kwargs=None, batch_name:str = None):
+        self.batch_name = batch_name
+        self.kwargs = kwargs
+        self.number_of_simulations = number_of_simulations
+        self.simulation = simulation
+        self.initialize_simulations()
+    
+    def initialize_simulations(self):
+        self.simulations = [self.simulation(**self.kwargs) for _ in range(self.number_of_simulations)]
+
+    def run(self, iterations = 1000):
+        for simulation in self.simulations:
+            simulation.run(iterations)
+
+    def test_run(self):
+        GUI().start(func=[self.initialize, self.observe, self.update])
+
+def save_batch(batch,file_name:str = None):
+    if batch.batch_name is None:
+        file_name = input('Please enter a file name: ')
+    else:
+        file_name = batch.batch_name
+    with open(f'{file_name}.pkl', 'wb') as output:
+            dill.dump(batch, output, protocol=dill.HIGHEST_PROTOCOL)
+
+def load_batch(path):
+    with open(f'{path}', 'rb') as input:
+        batch = dill.load(input)
+    return batch
+    

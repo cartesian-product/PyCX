@@ -1,5 +1,6 @@
 import pycxsimulator
-from pylab import *
+from matplotlib.pylab import pyplot as plt
+import numpy as np
 
 width = 100
 height = 100
@@ -18,24 +19,24 @@ def initialize():
     
     free = []
     for i in range(populationSize - 1):
-        free.append([uniform(0, width), uniform(0, height)])
+        free.append([np.random.uniform(0, width), np.random.uniform(0, height)])
 
     fixed = []
     fixed.append([width / 2, height / 2])
 
 def observe():
-    cla()
+    plt.cla()
     if free != []:
         x = [ag[0] for ag in free]
         y = [ag[1] for ag in free]
-        scatter(x, y, color = 'cyan')
+        plt.scatter(x, y, color = 'cyan')
     if fixed != []:
         x = [ag[0] for ag in fixed]
         y = [ag[1] for ag in fixed]
-        scatter(x, y, color = 'blue')
-    axis('scaled')
-    axis([0, width, 0, height])
-    title('t = ' + str(time))
+        plt.scatter(x, y, color = 'blue')
+    plt.axis('scaled')
+    plt.axis([0, width, 0, height])
+    plt.title('t = ' + str(time))
 
 def clip(a, amin, amax):
     if a < amin: return amin
@@ -49,8 +50,8 @@ def update():
 
     # simulate random motion
     for ag in free:
-        ag[0] += normal(0, noiseLevel)
-        ag[1] += normal(0, noiseLevel)
+        ag[0] += np.random.normal(0, noiseLevel)
+        ag[1] += np.random.normal(0, noiseLevel)
         ag[0] = clip(ag[0], 0, width)
         ag[1] = clip(ag[1], 0, height)
 
